@@ -1,0 +1,12 @@
+---
+interface Props extends astroHTML.JSX.InputHTMLAttributes {}
+const { class: classes = "", ...props } = Astro.props;
+---
+
+<div class="flex flex-col">
+  <input
+    class={`font-outfit text-base leading-6 text-brand-muted placeholder:text-brand-muted px-5 py-4 outline-brand-1 w-full border-[1.5px] border-brand-muted/50 rounded-md data-[error]:border-red-500 ${classes}`}
+    {...props}
+  />
+  <p hidden class="error-box text-red-500 text-sm"></p>
+</div>

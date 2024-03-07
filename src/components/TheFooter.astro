@@ -1,0 +1,14 @@
+---
+import { site } from "@/constants/config";
+
+interface Props {
+  class?: string;
+}
+const { class: classes } = Astro.props;
+---
+
+<footer class:list={["py-5 text-center", classes]}>
+  <a href="#" class="text-brand-1">Privacy Policy</a>
+
+  <p class="text-brand-1">Powered by {site.business_name}</p>
+</footer>

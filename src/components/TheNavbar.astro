@@ -1,0 +1,122 @@
+---
+import { site } from "@/constants/config";
+
+const links: { name: string; url: string }[] = [
+  // {
+  //   name: "Home",
+  //   url: "#",
+  // },
+];
+
+interface Props {
+  class?: string;
+}
+const { class: classes } = Astro.props;
+---
+
+<header
+  id="mainHeader"
+  class:list={[
+    "md:py-5 bg-white md:bg-white/95 sticky top-0 z-50 w-full",
+    classes,
+  ]}
+>
+  <nav
+    class="max-w-[95vw] mx-auto flex flex-col md:flex-row md:items-center md:justify-between relative isolate"
+  >
+    <div
+      class="flex items-center justify-between w-full md:w-max max-md:bg-white max-md:py-4"
+    >
+      <a
+        href="/"
+        class="flex items-center gap-1 uppercase underline font-bold text-4xl md:text-2xl text-brand-1"
+      >
+        {site.name}
+      </a>
+      <button
+        id="menu"
+        data-open="false"
+        type="button"
+        class="md:hidden group/menu"
+        ><svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-12 w-auto pointer-events-none group-data-[open='true']/menu:hidden"
+          viewBox="0 0 512 512"
+          ><path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-miterlimit="10"
+            stroke-width="48"
+            d="M88 152h336M88 256h336M88 360h336"></path></svg
+        >
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-12 w-auto pointer-events-none group-data-[open='false']/menu:hidden"
+          viewBox="0 0 24 24"
+          ><path
+            fill="none"
+            stroke="currentColor"
+            stroke-dasharray="12"
+            stroke-dashoffset="12"
+            stroke-linecap="round"
+            stroke-width="2"
+            d="M12 12L19 19M12 12L5 5M12 12L5 19M12 12L19 5"
+            ><animate
+              fill="freeze"
+              attributeName="stroke-dashoffset"
+              dur="0.4s"
+              values="12;0"></animate></path
+          ></svg
+        >
+      </button>
+    </div>
+    <ul
+      id="links"
+      data-show-mobile="false"
+      class="flex flex-col md:flex-row max-md:py-10 items-center gap-10 max-md:absolute max-md:left-0 max-md:w-full max-md:top-full max-md:bg-white data-[show-mobile='false']:max-md:opacity-0 data-[show-mobile='false']:max-md:-translate-y-full max-md:duration-300 max-md:transition-transform max-md:translate-y-0 max-md:opacity-100 -z-[1]"
+    >
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.url}
+              class="hover:underline text-brand-1 max-md:text-xl"
+            >
+              {link.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const links = document.querySelector("#links") as HTMLElement;
+  const toggle = document.querySelector("#menu") as HTMLButtonElement;
+  const header = document.querySelector("#mainHeader") as HTMLElement;
+
+  toggle.addEventListener("click", () => {
+    const IS_SHOWN = links.dataset.showMobile === "true";
+    toggle.dataset.open = `${!IS_SHOWN}`;
+    links.dataset.showMobile = `${!IS_SHOWN}`;
+
+    /**
+     * Hide the body scroll when the menu is open
+     */
+    document.body.style.overflow = IS_SHOWN ? "auto" : "hidden";
+  });
+
+  /**
+   * Close the menu if the user clicks outside
+   */
+  document.addEventListener("click", (event) => {
+    if (!header.contains(event.target as Node)) {
+      toggle.dataset.open = "false";
+      links.dataset.showMobile = "false";
+      document.body.style.overflow = "auto";
+    }
+  });
+</script>

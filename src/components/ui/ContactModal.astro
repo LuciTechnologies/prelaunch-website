@@ -1,0 +1,262 @@
+---
+import Input from "./form/Input.astro";
+---
+
+<dialog
+  id="contactModal"
+  class="bg-white rounded-2xl shadow-lg w-5/6 md:w-4/5 lg:w-3/5 xl:w-2/5 overflow-hidden backdrop:bg-brand-muted/40"
+>
+  <div class="pt-16 md:pt-20 p-8 md:p-12 relative">
+    <form id="contactForm" class="flex flex-col gap-4">
+      <div
+        id="status-box"
+        data-status=""
+        hidden
+        class="data-[status='success']:bg-green-100 data-[status='success']:text-green-800 data-[status='error']:text-red-500 data-[status='error']:bg-red-50 rounded-[10px] shadow-[0px_4px_40px_0px_rgba(0,_0,_0,_0.05)] p-5 relative"
+      >
+      </div>
+
+      <div class="space-y-5">
+        <Input
+          type="text"
+          name="firstName"
+          placeholder="Enter first name"
+          required
+        />
+
+        <Input
+          type="text"
+          name="lastName"
+          placeholder="Enter last name"
+          required
+        />
+
+        <Input type="email" name="email" placeholder="Enter email" required />
+      </div>
+      <button
+        type="submit"
+        class="bg-brand-1 mt-4 hover:shadow-lg font-outfit w-max text-white font-medium py-3.5 px-12 lg:px-20 rounded-2xl"
+      >
+        Submit
+      </button>
+    </form>
+
+    <form method="dialog" class="absolute top-6 right-12 flex justify-end">
+      <button
+        type="submit"
+        class="flex items-center justify-center size-8 text-brand-muted hover:text-white bg-brand-muted/10 hover:bg-brand-1 transition-all duration-200 rounded-md"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-auto pointer-events-none"
+          viewBox="0 0 24 24"
+          ><path
+            fill="none"
+            stroke="currentColor"
+            stroke-dasharray="12"
+            stroke-dashoffset="12"
+            stroke-linecap="round"
+            stroke-width="2"
+            d="M12 12L19 19M12 12L5 5M12 12L5 19M12 12L19 5"
+            ><animate
+              fill="freeze"
+              attributeName="stroke-dashoffset"
+              dur="0.4s"
+              values="12;0"></animate></path
+          ></svg
+        >
+      </button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  import { type ContactFormFields, contactFormSchema } from "@/schemas/contact";
+
+  const dialog = document.querySelector("#contactModal") as HTMLDialogElement;
+
+  const statusBox = document.querySelector("#status-box") as HTMLDivElement;
+
+  const form = document.querySelector("#contactForm") as HTMLFormElement;
+
+  const formElements = Array.from(form.querySelectorAll("input, textarea"));
+
+  const errors: ContactFormFields = {
+    firstName: "",
+    lastName: "",
+    email: "",
+  };
+
+  type FormStatus = "success" | "error";
+
+  const ERROR_ATTRIBUTE = "data-error";
+
+  const STATUS_ATTRIBUTE = "data-status";
+
+  /**
+   *   close dialog if clicked outside
+   */
+  dialog.addEventListener("click", (e) => {
+    const dialogDimensions = dialog.getBoundingClientRect();
+    if (
+      e.clientX < dialogDimensions.left ||
+      e.clientX > dialogDimensions.right ||
+      e.clientY < dialogDimensions.top ||
+      e.clientY > dialogDimensions.bottom
+    ) {
+      dialog.close();
+    }
+  });
+
+  /**
+   *   messages for each status
+   */
+  const messages: Record<FormStatus, string> = {
+    success: "Thanks for reaching out!",
+    error: "Please fill all fields",
+  };
+
+  /**
+   *   reset status
+   */
+  function resetStatusBox() {
+    statusBox.innerText = "";
+    statusBox.removeAttribute(STATUS_ATTRIBUTE);
+    statusBox.setAttribute("hidden", "true");
+  }
+
+  /**
+   *   show status
+   */
+  function showStatusBox(
+    status: FormStatus,
+    message?: string,
+    shouldReset: boolean = true
+  ) {
+    statusBox.setAttribute(STATUS_ATTRIBUTE, status);
+
+    statusBox.innerText = message || messages[status];
+
+    statusBox.removeAttribute("hidden");
+
+    shouldReset &&
+      setTimeout(() => {
+        resetStatusBox();
+      }, 5000);
+  }
+
+  /**
+   *   show error text
+   */
+  function showErrorText(key: string) {
+    const field = form.querySelector(
+      `input[name="${key}"] ~ p.error-box`
+    ) as HTMLElement | null;
+
+    if (field) {
+      field.innerText = errors[key as keyof ContactFormFields];
+      field.removeAttribute("hidden");
+    }
+  }
+
+  /**
+   * hide error text
+   */
+  function hideErrorText() {
+    (
+      Array.from(form.querySelectorAll(`input ~ p.error-box`)) as HTMLElement[]
+    ).forEach((field) => {
+      field.innerText = "";
+      field.setAttribute("hidden", "true");
+    });
+  }
+
+  function showErrors() {
+    const errorFields = Object.keys(errors).filter(
+      (key) => errors[key as keyof ContactFormFields] !== ""
+    );
+
+    if (errorFields.length === 0) return;
+
+    errorFields.forEach((key) => {
+      const el = formElements.find((el) => el.getAttribute("name") === key);
+
+      if (!el) return;
+
+      el.setAttribute(ERROR_ATTRIBUTE, errors[key as keyof ContactFormFields]);
+      showErrorText(key);
+    });
+  }
+
+  function resetErrors() {
+    /**
+     * remove error attribute
+     */
+    formElements.forEach((el) => {
+      el.removeAttribute(ERROR_ATTRIBUTE);
+    });
+
+    /**
+     * hide error text
+     */
+
+    hideErrorText();
+
+    /**
+     * reset errors to empty
+     */
+    Object.keys(errors).forEach((key) => {
+      errors[key as keyof ContactFormFields] = "";
+    });
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    resetStatusBox();
+
+    resetErrors();
+
+    const fd = new FormData(form);
+
+    const fieldValues = Object.fromEntries(fd.entries()) as ContactFormFields;
+
+    const fields = contactFormSchema.safeParse(fieldValues);
+
+    if (!fields.success) {
+      fields.error.issues.forEach((issue) => {
+        errors[issue.path[0] as keyof ContactFormFields] = issue.message;
+      });
+
+      showStatusBox("error", undefined, false);
+      showErrors();
+    } else {
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          body: JSON.stringify(fields.data),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.status === 200) {
+          form.reset();
+        }
+
+        showStatusBox(res.status === 200 ? "success" : "error");
+
+        setTimeout(() => {
+          dialog.close();
+        }, 3500);
+      } catch (error) {
+        let errorMessage = "Something went wrong";
+
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+
+        showStatusBox("error", errorMessage);
+      }
+    }
+  });
+</script>

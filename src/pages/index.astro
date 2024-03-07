@@ -1,0 +1,175 @@
+---
+import { site } from "@/constants/config";
+import Layout from "@/layouts/Layout.astro";
+
+import { Image } from "astro:assets";
+
+import noCoins from "@/assets/no-coins.svg";
+import growth from "@/assets/growth.svg";
+import ContactModal from "@/components/ui/ContactModal.astro";
+---
+
+<Layout>
+  <section class="relative pb-10 isolate">
+    <div
+      class="md:absolute w-full md:w-1/2 md:top-0 md:left-0 flex flex-col items-center py-10 lg:pb-0 bg-gradient-to-br from-white via-white xl:from-transparent xl:via-transparent"
+    >
+      <h1 class="text-[8rem] font-bold text-brand-1">{site.name}</h1>
+      <p class="text-base text-brand-1">{site.description}</p>
+
+      <div class="mt-5">
+        <button
+          type="button"
+          data-get-notified
+          class="py-3 border rounded-2xl hover:text-brand-1 border-brand-1 flex items-center gap-1 justify-center min-w-[300px] hover:bg-white bg-brand-1 text-white transition-colors shadow-md"
+        >
+          Get Notified
+        </button>
+      </div>
+    </div>
+    <Image
+      class:list={["w-full h-auto -mt-28 md:mt-0 relative -z-[1]"]}
+      src={noCoins}
+      alt=""
+    />
+  </section>
+
+  <div
+    class="py-10 max-w-[90vw] xl:max-w-[65vw] mx-auto *:py-14 first:*:pt-0 *:space-y-4"
+  >
+    <section aria-label="How We Got Started">
+      <h2 class="text-3xl md:text-4xl font-bold text-brand-1">
+        How We Got Started
+      </h2>
+
+      <div class="space-y-2 text-brand-muted">
+        <p>
+          We recognized a need within the real estate industry for comprehensive
+          software solutions that support the research, project management, and
+          reliable data needs of investors.
+        </p>
+        <p>
+          Instead of taking unnecessary risks, we wanted to create something
+          tangible that took the guesswork out of intelligent investment
+          decision-making.
+        </p>
+      </div>
+    </section>
+
+    <section
+      aria-label="How Our Tech Supports Your Growth"
+      class="grid grid-cols-1 lg:grid-cols-[40%,1fr] gap-5"
+    >
+      <div>
+        <Image src={growth} alt="" />
+      </div>
+      <div class="space-y-4">
+        <h2 class="text-3xl md:text-4xl font-bold text-brand-1">
+          How Our Tech Supports Your Growth
+        </h2>
+
+        <div class="space-y-2 text-brand-muted">
+          <p>
+            Luci Tech is a wide-ranging software solution for your most pressing
+            investing needs. Whether you need a high-quality market research
+            suite, a powerful investment model, or want more support for
+            tracking the status and due dates of your potential investments,
+            Luci can help.
+          </p>
+          <p>
+            We’ve also developed other features that make Luci so beneficial to
+            real estate investors. These include the ability to create teams and
+            assign tasks to manage your business, a real-time calendar app that
+            keeps track of your tasks, an off-market property locator, and deal
+            listing services.
+          </p>
+          <p>
+            Best of all, you can access Luci’s solutions anywhere you are in the
+            US.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Our Principles">
+      <h2 class="text-3xl md:text-4xl font-bold text-brand-1">
+        Our Principles
+      </h2>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-5 *:p-5 *:bg-brand-1/5 *:shadow-sm *:rounded-sm"
+      >
+        <div class="space-y-2 text-brand-muted">
+          <p class="text-lg font-semibold">Integrity</p>
+          <p>
+            We believe in full transparency in every aspect of our business.
+            With a strong emphasis on doing the right thing at the right time,
+            we are guided by integrity in all that we do.
+          </p>
+        </div>
+        <div class="space-y-2 text-brand-muted">
+          <p class="text-lg font-semibold">Respect</p>
+          <p>
+            We respect our clients, partners, and employees, and are dedicated
+            to helping each of them become their greatest version.
+          </p>
+        </div>
+        <div class="space-y-2 text-brand-muted md:col-span-2">
+          <p class="text-lg font-semibold">Elevation</p>
+          <p>
+            As responsible capitalists, we believe that wealth generation has a
+            domino effect, allowing our business to grow in a way that is best
+            for the people around us. That’s why we strive to elevate
+            entrepreneurs seeking to do the same with their businesses.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="pb-10">
+    <div
+      class="max-w-[90vw] md:max-w-[75vw] xl:max-w-[50vw] mx-auto space-y-20"
+    >
+      <p class="text-brand-muted text-xl text-center font-medium">
+        Our solutions are designed and built to support real estate investors
+        because we’re real estate investors who care about the industry. By
+        creating an ecosystem of tools that support your business, we help
+        clients like you tackle almost every task in a single location all for
+        an affordable price point.
+      </p>
+
+      <div
+        class="border border-brand-1/50 bg-white shadow rounded-2xl p-10 space-y-10"
+      >
+        <p class="text-brand-muted text-xl text-center font-medium">
+          Experience the difference Luci Tech can make in your investment
+          strategy by signing up today.
+        </p>
+
+        <button
+          type="button"
+          data-get-notified
+          class="py-3 border rounded-2xl hover:text-brand-1 border-brand-1 flex items-center gap-1 justify-center w-full md:w-max md:min-w-[300px] hover:bg-white bg-brand-1 text-white transition-colors shadow-md mx-auto hover:shadow-brand-1/50"
+        >
+          Get Notified
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <ContactModal />
+</Layout>
+
+<script>
+  const dialog = document.querySelector("#contactModal") as HTMLDialogElement;
+
+  /**
+   * When the user clicks on the button, open the modal
+   */
+  document.querySelectorAll("[data-get-notified]").forEach((button) => {
+    button.addEventListener("click", () => {
+      dialog.showModal();
+    });
+  });
+</script>
