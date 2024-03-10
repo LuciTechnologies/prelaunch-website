@@ -2,6 +2,6 @@
 git fetch --all
 git checkout --force "origin/main"
 pnpm install && pnpm run build
-rm -r /var/www/html/* && cp -r /home/altrgeek/prelaunch-website/dist/* /var/www/html/
-chown -R nginx:nginx /var/www/html && chmod -R 755 /var/www/html
-service nginx restart
+sudo cp -rf /home/altrgeek/prelaunch-website/dist/* /var/www/html/
+sudo chown -R www-data:www-data /var/www/html && sudo chmod -R 755 /var/www/html
+sudo systemctl restart nginx
